@@ -162,8 +162,8 @@ variable "users" {
       for u in keys(var.users) :
       can(regex(
         var.company != null
-          ? format(".*-(?:%s|ext)$", lower(replace(var.company, " ", "")))
-          : ".*-ext$",
+        ? format(".*-(?:%s|ext)$", lower(replace(var.company, " ", "")))
+        : ".*-ext$",
         lower(u)
       ))
     ])

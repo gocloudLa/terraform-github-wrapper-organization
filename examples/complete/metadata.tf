@@ -1,7 +1,7 @@
 locals {
   metadata = {
-    environment   = "Laboratory"
-    github_owner  = "example-org"
+    environment  = "Laboratory"
+    github_owner = "example-org"
 
     key = {
       company = "dmc"

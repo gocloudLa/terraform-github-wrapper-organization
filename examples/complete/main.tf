@@ -26,8 +26,8 @@ module "wrapper_organization" {
     secret_scanning_push_protection_enabled_for_new_repositories = true
 
     users = {
-      "user1-example" = "member"
-      "user2-example" = "member"
+      "user1-example"  = "member"
+      "user2-example"  = "member"
       "admin1-example" = "admin"
     }
 
