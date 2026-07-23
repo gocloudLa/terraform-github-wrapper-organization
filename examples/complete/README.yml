@@ -1,0 +1,9 @@
+title: "Complete Example"
+description: "This example demonstrates GitHub organization settings, membership invites, and optional webhooks."
+main_purpose: "Configure organization profile, security defaults for new repositories, and invite users with roles."
+key_features:
+  - "**Enable Organization**: Toggles management of organization settings via `enable`."
+  - "**Organization Profile**: Sets billing email, company, location, name, description, and blog."
+  - "**Security Defaults**: Configures Dependabot, dependency graph, and secret scanning for new repositories."
+  - "**Membership Management**: Invites users with `member` or `admin` roles."
+  - "**Optional Webhooks**: Supports organization-level webhook configuration."

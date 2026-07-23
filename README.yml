@@ -1,0 +1,173 @@
+module_name: "Terraform Organization Module"
+module_description: |
+  The Terraform wrapper for GitHub Organization simplifies configuration of organization settings, memberships, and webhooks. It provides an opinionated template for managing org-wide defaults and security posture for new repositories.
+module_badges:
+  - url: "https://github.com/gocloudLa/terraform-github-wrapper-organization/releases/latest"
+    image: "https://img.shields.io/github/v/release/gocloudLa/terraform-github-wrapper-organization.svg?style=for-the-badge"
+    alt: "Latest Release"
+  - url: ""
+    image: "https://img.shields.io/github/last-commit/gocloudLa/terraform-github-wrapper-organization.svg?style=for-the-badge"
+    alt: "Last Commit"
+  - url: "https://registry.terraform.io/modules/gocloudLa/wrapper-organization/github"
+    image: "https://img.shields.io/badge/Terraform-Registry-7B42BC?style=for-the-badge&logo=terraform&logoColor=white"
+    alt: "Terraform Registry"
+quick_start: |
+  ```hcl
+  organization_parameters = {
+    enable = true
+
+    billing_email = "billing@example.com"
+    company       = "Example"
+    email         = "info@example.com"
+    location      = "Example City"
+    name          = "Example Org"
+    description   = "Example organization for Terraform labs"
+    blog          = "https://www.example.com"
+
+    # Default: read
+    default_repository_permission = "none"
+
+    # Default: true
+    advanced_security_enabled_for_new_repositories               = false
+    dependabot_alerts_enabled_for_new_repositories               = true
+    dependabot_security_updates_enabled_for_new_repositories     = true
+    dependency_graph_enabled_for_new_repositories                = true
+    secret_scanning_enabled_for_new_repositories                 = true
+    secret_scanning_push_protection_enabled_for_new_repositories = true
+
+    users = {
+      "user1-example" = "member"
+      "user2-example" = "member"
+      "admin1-example" = "admin"
+    }
+
+    # webhooks = {
+    #   "slack" = {
+    #     events = ["push", "pull_request"]
+    #     active = true
+    #     configuration = {
+    #       url          = "https://hooks.example.com/github"
+    #       content_type = "json"
+    #       secret       = "replace-me"
+    #       insecure_ssl = false
+    #     }
+    #   }
+    # }
+  }
+  ```
+features:
+  - icon: "🏢"
+    title: "Organization Settings"
+    short_description: "Manage org profile and repository creation defaults"
+    long_description: |
+      Configures `github_organization_settings` including profile fields, default repository permissions, and whether members can create or fork repositories.
+    examples:
+      - title: "Minimal profile"
+        code: |
+          ```hcl
+          organization_parameters = {
+            enable = true
+            billing_email = "billing@example.com"
+            company       = "Example"
+            name          = "Example Org"
+            # Default: read
+            default_repository_permission = "none"
+          }
+          ```
+  - icon: "🔒"
+    title: "Security Defaults For New Repositories"
+    short_description: "Enable Dependabot, dependency graph, and secret scanning"
+    long_description: |
+      Applies org-wide defaults for Advanced Security, Dependabot alerts/updates, dependency graph, and secret scanning push protection on newly created repositories.
+    examples:
+      - title: "Hardened defaults"
+        code: |
+          ```hcl
+          organization_parameters = {
+            enable = true
+            billing_email = "billing@example.com"
+            dependabot_alerts_enabled_for_new_repositories               = true
+            dependabot_security_updates_enabled_for_new_repositories     = true
+            dependency_graph_enabled_for_new_repositories                = true
+            secret_scanning_enabled_for_new_repositories                 = true
+            secret_scanning_push_protection_enabled_for_new_repositories = true
+            # Default: true
+            advanced_security_enabled_for_new_repositories = false
+          }
+          ```
+  - icon: "👥"
+    title: "Membership Management"
+    short_description: "Invite users with member or admin roles"
+    long_description: |
+      Creates `github_membership` resources from a username-to-role map. When `company` is set, usernames must end with `-<company>` or `-ext`.
+    examples:
+      - title: "Invite members"
+        code: |
+          ```hcl
+          organization_parameters = {
+            enable = true
+            billing_email = "billing@example.com"
+            company       = "Example"
+            users = {
+              "user1-example"  = "member"
+              "admin1-example" = "admin"
+            }
+          }
+          ```
+  - icon: "🔔"
+    title: "Organization Webhooks"
+    short_description: "Configure org-level webhook endpoints"
+    long_description: |
+      Creates `github_organization_webhook` entries for event delivery to external systems. Secrets should be provided via secure variable injection, not committed plaintext.
+    examples:
+      - title: "Webhook skeleton"
+        code: |
+          ```hcl
+          organization_parameters = {
+            enable = true
+            billing_email = "billing@example.com"
+            webhooks = {
+              "notifications" = {
+                events = ["push", "pull_request"]
+                active = true
+                configuration = {
+                  url          = "https://hooks.example.com/github"
+                  content_type = "json"
+                  secret       = "replace-me"
+                  insecure_ssl = false
+                }
+              }
+            }
+          }
+          ```
+important_notes: |
+  - **⚠️ Enable Gate:** Set `organization_parameters.enable = true` or the wrapper creates no resources.
+  - **ℹ️ Provider Owner:** Configure the GitHub provider `owner` to the target organization (see `examples/complete`).
+  - **🔒 Username Convention:** When `company` is set, usernames must end with `-<company>` (lowercase, spaces removed) or `-ext`.
+  - **🔒 Webhook Secrets:** Do not commit real webhook secrets; inject them at apply time.
+input_table: |
+  | enable | Enables management of organization settings | `bool` | `false` | no |
+  | billing_email | Billing email for the organization | `string` | `null` | yes |
+  | company | Company name shown on the organization profile | `string` | `null` | no |
+  | email | Public contact email | `string` | `null` | no |
+  | location | Organization location | `string` | `null` | no |
+  | name | Display name for the organization | `string` | `null` | no |
+  | description | Organization description | `string` | `null` | no |
+  | blog | Blog or website URL | `string` | `null` | no |
+  | has_organization_projects | Enable organization projects | `bool` | `true` | no |
+  | has_repository_projects | Enable repository projects | `bool` | `true` | no |
+  | default_repository_permission | Default member permission on repositories (`read`, `write`, `admin`, `none`) | `string` | `read` | no |
+  | members_can_create_repositories | Allow members to create repositories | `bool` | `false` | no |
+  | members_can_create_public_repositories | Allow members to create public repositories | `bool` | `false` | no |
+  | members_can_create_private_repositories | Allow members to create private repositories | `bool` | `false` | no |
+  | members_can_create_internal_repositories | Allow members to create internal repositories | `bool` | `false` | no |
+  | members_can_fork_private_repositories | Allow members to fork private repositories | `bool` | `false` | no |
+  | web_commit_signoff_required | Require signoff on web commits | `bool` | `false` | no |
+  | advanced_security_enabled_for_new_repositories | Enable Advanced Security for new repositories | `bool` | `true` | no |
+  | dependabot_alerts_enabled_for_new_repositories | Enable Dependabot alerts for new repositories | `bool` | `true` | no |
+  | dependabot_security_updates_enabled_for_new_repositories | Enable Dependabot security updates for new repositories | `bool` | `true` | no |
+  | dependency_graph_enabled_for_new_repositories | Enable dependency graph for new repositories | `bool` | `true` | no |
+  | secret_scanning_enabled_for_new_repositories | Enable secret scanning for new repositories | `bool` | `true` | no |
+  | secret_scanning_push_protection_enabled_for_new_repositories | Enable secret scanning push protection for new repositories | `bool` | `true` | no |
+  | webhooks | Map of organization webhooks | `map(object)` | `{}` | no |
+  | users | Map of username → role (`member` or `admin`) | `map(string)` | `{}` | no |
